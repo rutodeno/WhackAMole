@@ -7,7 +7,7 @@ public class Whack_A_Mole {
 	int molesLeft;
 	int attemptsLeft ;
 	char[][] moleGrid = new char [14][14];
-
+ 
 	Whack_A_Mole(int numAttempts, int gridDimension) {
 		numAttempts = 0;
 		gridDimension = 14;
@@ -49,8 +49,7 @@ public class Whack_A_Mole {
 
 	void printGridToUser() {
 		char[][] userGrid = new char [14][14];
-		System.arraycopy(moleGrid, 0, userGrid,0, moleGrid.length); // creating a copy of an array to print to user
-
+		userGrid = Arrays.copyOf(moleGrid, 14);
 		int m = 1; 
 		int n = 1;
 		int count = 0;
@@ -70,7 +69,6 @@ public class Whack_A_Mole {
 					System.out.print(String.format("%1$2s", m)); // the vertical numbers. String.format modifies the output
 					count++;
 				}
-
 				if (userGrid[i][j] == 'M') {
 					userGrid[i][j] = '*';
 				}
@@ -100,7 +98,6 @@ public class Whack_A_Mole {
 					System.out.print(String.format("%1$2s", m)); // the vertical numbers. String.format modifies the output
 					count++;
 				}
-
 				System.out.print(String.format("%1$4s",moleGrid[i][j] ));
 			}
 			System.out.print('\n');
@@ -146,32 +143,30 @@ public class Whack_A_Mole {
 		boolean exitGame =false;
 		boolean validInput = false;
 
-		while (!validInput) { // Checking if our inputs are within the range selected
+		while (!exitGame) {
 			Scanner scanner = new Scanner(System.in);
 			System.out.print("Enter x component:  ");
-			xInput = scanner.nextInt() -1; // to make our input range from 0 to 9. Remain within bounds of array
+			xInput = scanner.nextInt() - 1; // to make our input range from 0 to 9. Remain within bounds of array
 			System.out.print("Enter y component:  ");
-			yInput = scanner.nextInt() -1; // to make our input range from 0 to 9
+			yInput = scanner.nextInt() - 1; // to make our input range from 0 to 9
 
-			if (xInput == -2 && yInput == -2) {
-				System.out.print("Do you wish to exit the game?");
-				System.out.print("Enter y to exit on n to continue playing: ");
-				char userSelection = scanner.next().charAt(0);
-				if (userSelection == 'y') {
-					exitGame = true;
+			if ((xInput == -2 && yInput == -2) || (newGame.attemptsLeft == 0)) {
+				System.out.println("Bye !!");
+				exitGame = true;
+			} else {
+				validInput = newGame.inputValidator(xInput, yInput);
+				if (!validInput) {
+					System.out.println("Please check your inputs and try again");
+				} else {
+					// Whack the mole
+					newGame.whack(xInput, yInput);
+					System.out.println(newGame.attemptsLeft+" attempts left");
+					newGame.printGridToUser();
 				}
-			}
 
-			validInput = newGame.inputValidator(xInput, yInput);
-			if (!validInput) {
-				System.out.println("Please check your inputs and try again");
 			}
 		}
-
-		// Whack the mole
-		newGame.whack(xInput, yInput);
-		newGame.printGridToUser();
-
+		newGame.printGrid();
 	}
 
 }
