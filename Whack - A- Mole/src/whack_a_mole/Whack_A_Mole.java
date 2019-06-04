@@ -7,16 +7,18 @@ public class Whack_A_Mole {
 	int molesLeft;
 	int attemptsLeft ;
 	char[][] moleGrid = new char [14][14];
- 
+	char[][] userGrid = new char [14][14];
+
 	Whack_A_Mole(int numAttempts, int gridDimension) {
 		numAttempts = 0;
 		gridDimension = 14;
 		molesLeft = 10;
-		attemptsLeft = 50;
-		score = 0;
-		for (int i = 0; i < gridDimension; i++) {
-			for (int j = 0; j < gridDimension; j++) {
+		attemptsLeft = 10;
+		score = 0;		
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 10; j++) {
 				moleGrid[i][j] = '*';
+				userGrid[i][j] = '*';
 			}
 		}
 	}
@@ -30,7 +32,6 @@ public class Whack_A_Mole {
 				}
 			}
 		}
-
 		molesLeft--;
 		return (molesLeft > 0) ? false:true; // all moles have been placed successfully
 	}
@@ -48,8 +49,11 @@ public class Whack_A_Mole {
 	}
 
 	void printGridToUser() {
-		char[][] userGrid = new char [14][14];
-		userGrid = Arrays.copyOf(moleGrid, 14);
+		for (int i = 0 ; i < 14; i++) {
+			for (int j = 0; j < 14; j++) {
+				userGrid[i][j] = moleGrid[i][j];
+			}
+		}
 		int m = 1; 
 		int n = 1;
 		int count = 0;
@@ -68,8 +72,8 @@ public class Whack_A_Mole {
 				if ( m > count) {
 					System.out.print(String.format("%1$2s", m)); // the vertical numbers. String.format modifies the output
 					count++;
-				}
-				if (userGrid[i][j] == 'M') {
+				}		
+				if (moleGrid[i][j] == 'M') {
 					userGrid[i][j] = '*';
 				}
 				System.out.print(String.format("%1$4s",userGrid[i][j] ));
@@ -98,6 +102,7 @@ public class Whack_A_Mole {
 					System.out.print(String.format("%1$2s", m)); // the vertical numbers. String.format modifies the output
 					count++;
 				}
+
 				System.out.print(String.format("%1$4s",moleGrid[i][j] ));
 			}
 			System.out.print('\n');
@@ -135,7 +140,7 @@ public class Whack_A_Mole {
 
 		// calling molesPlacer to place the 10 moles on the grid
 		newGame.molePlacer();
-		newGame.printGrid();
+		newGame.printGridToUser();
 
 		// user input
 		int xInput = 0;
@@ -150,22 +155,24 @@ public class Whack_A_Mole {
 			System.out.print("Enter y component:  ");
 			yInput = scanner.nextInt() - 1; // to make our input range from 0 to 9
 
-			if ((xInput == -2 && yInput == -2) || (newGame.attemptsLeft == 0)) {
+			if ((xInput == -2 && yInput == -2) || (newGame.attemptsLeft < 2) || (newGame.score > 8)) {
 				System.out.println("Bye !!");
 				exitGame = true;
-			} else {
-				validInput = newGame.inputValidator(xInput, yInput);
-				if (!validInput) {
-					System.out.println("Please check your inputs and try again");
-				} else {
-					// Whack the mole
-					newGame.whack(xInput, yInput);
-					System.out.println(newGame.attemptsLeft+" attempts left");
-					newGame.printGridToUser();
-				}
+			} 
 
+			validInput = newGame.inputValidator(xInput, yInput);
+			if (!validInput) {
+				System.out.println("Please check your inputs and try again");
+			} else {
+				// Whack the mole
+				newGame.whack(xInput, yInput);
+				System.out.println(newGame.attemptsLeft+" attempts left");
+				newGame.printGridToUser();
 			}
+
 		}
+		System.out.println("\n");
+		System.out.println("Game over!! Your score is: "+newGame.score);
 		newGame.printGrid();
 	}
 
